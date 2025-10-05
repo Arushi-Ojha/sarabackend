@@ -6,7 +6,11 @@ const axios = require('axios');
 // dotenv is optional — useful for local development, harmless in Lambda if .env not present
 require('dotenv').config();
 const serverlessExpress = require('@codegenie/serverless-express');
-
+app.use(cors({
+  origin: ['http://localhost:5173'], 
+  methods: ['GET','POST','OPTIONS'],
+  allowedHeaders: ['Content-Type']
+}));
 const IMAGGA_API_KEY = process.env.IMAGGA_API_KEY;
 const IMAGGA_API_SECRET = process.env.IMAGGA_API_SECRET;
 const OPEN_ROUTER_API = process.env.OPEN_ROUTER_API; // your openrouter key
@@ -182,4 +186,8 @@ ${JSON.stringify(metadataForAI, null, 2)}
     return res.status(500).json({ error: 'Failed to process SAR data.' });
   }
 });
-module.exports.handler = serverlessExpress({ app });
+const PORT = process.env.PORT || 3001; // Railway provides the PORT env var
+
+app.listen(PORT, () => {
+  console.log(`Server is running and listening on port ${PORT}`);
+});
